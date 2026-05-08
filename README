@@ -1,0 +1,7 @@
+Cloud-based full-stack application deployed on AWS using:
+- Angular frontend
+- Node.js backend
+- Terraform infrastructure
+- RDS database
+- ALB load balancing
+- Auto Scaling Group
