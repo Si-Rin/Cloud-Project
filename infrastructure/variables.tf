@@ -2,6 +2,7 @@ variable "aws_region" {}
 variable "key_name" {}
 variable "db_username" {}
 variable "db_password" {}
+variable "db_name" {}
 
 variable "ami_id" {
   description = "AMI ID for the EC2 instances"

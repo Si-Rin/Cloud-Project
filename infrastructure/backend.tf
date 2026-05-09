@@ -11,6 +11,7 @@ resource "aws_launch_template" "backend_lt" {
     db_host = aws_db_instance.db.address
     db_user = var.db_username
     db_pass = var.db_password
+    db_name = var.db_name
   }))
 }
 
@@ -22,7 +23,7 @@ resource "aws_lb_target_group" "backend_tg" {
   vpc_id   = aws_vpc.main.id
 
   health_check {
-    path = "/health"
+    path = "/"
   }
 }
 

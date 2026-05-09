@@ -30,8 +30,26 @@ cat > .env <<EOF
 DB_HOST=${db_host}
 DB_USER=${db_user}
 DB_PASS=${db_pass}
+DB_NAME=${db_name}
 PORT=3000
 EOF
+
+# Wait for RDS to accept connections
+echo "Waiting for RDS to accept connections..."
+# nc (netcat) is a utility for testing network connections. The -z option tells nc to scan for listening daemons without sending any data, -v enables verbose mode, and -w30 sets a timeout of 30 seconds.
+until nc -z -v -w30 ${db_host} 3306
+do
+  echo "Waiting for database connection (1) ..."
+  sleep 5
+done
+
+# Alternatively, you can use the mysql command to check if the database is ready:
+until mysql -h ${db_host} -u ${db_user} -p${db_pass} -e "SELECT 1" &>/dev/null; 
+do
+  echo "Waiting for database connection (2) ..."
+  sleep 5
+done
+echo "Database ready."
 
 # Start backend with PM2
 pm2 start npm --name backend -- start
