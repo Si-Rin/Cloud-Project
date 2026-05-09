@@ -28,20 +28,10 @@ npm run build
 # Copy Angular build
 cp -r dist/client/browser/* /var/www/html/
 
-# ==========================================
-# Generate runtime config dynamically (load balancer dns name will be injected by userdata script of load balancer)
-# ==========================================
+# Replace localhost with ALB URL
+sed -i 's|http://localhost:3000|${api_url}|g' /var/www/html/main-*.js
 
-cat > /var/www/html/runtime-config.js <<EOF
-window.__CONFIG__ = {
-    API_BASE_URL: "${api_url}"
-};
-EOF
-
-# ==========================================
 # Configure nginx
-# ==========================================
-
 cat > /etc/nginx/sites-available/default <<EOF
 server {
     listen 80;
@@ -52,10 +42,6 @@ server {
 
     location / {
         try_files \$uri \$uri/ /index.html;
-    }
-
-    location = /runtime-config.js {
-        add_header Cache-Control "no-store, no-cache, must-revalidate";
     }
 }
 EOF
