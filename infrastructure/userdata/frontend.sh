@@ -10,6 +10,12 @@ apt install -y git nginx curl
 curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 apt install -y nodejs
 
+# Add swap space to prevent OOM kill during Angular build
+fallocate -l 2G /swapfile        # no sudo — userdata runs as root
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+
 # Go to web root
 cd /var/www/html
 
@@ -21,16 +27,14 @@ git clone https://github.com/alaabenhmida/client.git app
 
 # Build Angular app
 cd app
-
-npm install
+npm install                       # was missing before build
 npm run build
 
 # Copy Angular build
-cp -r dist/client/browser/* /var/www/html/
+cp -r dist/*/browser/* /var/www/html/   # wildcard instead of hardcoded "client"
 
 # Configure nginx
 cat > /etc/nginx/sites-available/default <<EOF
-# Serve the Angular app on port 80
 server {
     listen 80;
     server_name _;
@@ -43,7 +47,6 @@ server {
     }
 }
 
-# Proxy localhost:3000 to the real backend ALB
 server {
     listen 3000;
     server_name localhost;
