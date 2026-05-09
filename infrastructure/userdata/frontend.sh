@@ -28,11 +28,9 @@ npm run build
 # Copy Angular build
 cp -r dist/client/browser/* /var/www/html/
 
-# Replace localhost with ALB URL
-sed -i 's|http://localhost:3000|${api_url}|g' /var/www/html/main-*.js
-
 # Configure nginx
 cat > /etc/nginx/sites-available/default <<EOF
+# Serve the Angular app on port 80
 server {
     listen 80;
     server_name _;
@@ -42,6 +40,18 @@ server {
 
     location / {
         try_files \$uri \$uri/ /index.html;
+    }
+}
+
+# Proxy localhost:3000 to the real backend ALB
+server {
+    listen 3000;
+    server_name localhost;
+
+    location / {
+        proxy_pass ${api_url};
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
     }
 }
 EOF
