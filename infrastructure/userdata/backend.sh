@@ -4,7 +4,7 @@
 apt update -y
 
 # Install dependencies
-apt install -y git curl
+apt install -y git curl mysql-client netcat-openbsd
 
 # Install Node.js 18
 curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
@@ -36,17 +36,9 @@ EOF
 
 # Wait for RDS to accept connections
 echo "Waiting for RDS to accept connections..."
-# nc (netcat) is a utility for testing network connections. The -z option tells nc to scan for listening daemons without sending any data, -v enables verbose mode, and -w30 sets a timeout of 30 seconds.
-until nc -z -v -w30 ${db_host} 3306
-do
-  echo "Waiting for database connection (1) ..."
-  sleep 5
-done
-
 # Alternatively, you can use the mysql command to check if the database is ready:
 until mysql -h ${db_host} -u ${db_user} -p${db_pass} -e "SELECT 1" &>/dev/null; 
 do
-  echo "Waiting for database connection (2) ..."
   sleep 5
 done
 echo "Database ready."
