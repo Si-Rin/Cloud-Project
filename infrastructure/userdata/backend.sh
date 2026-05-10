@@ -29,7 +29,7 @@ npm install
 cat > .env <<EOF
 DB_HOST=${db_host}
 DB_USER=${db_user}
-DB_PASS=${db_pass}
+DB_PASSWORD=${db_password}
 DB_NAME=${db_name}
 PORT=3000
 EOF
@@ -37,7 +37,7 @@ EOF
 # Wait for RDS to accept connections
 echo "Waiting for RDS to accept connections..."
 # Alternatively, you can use the mysql command to check if the database is ready:
-until mysql -h ${db_host} -u ${db_user} -p${db_pass} -e "SELECT 1" &>/dev/null; 
+until mysql -h ${db_host} -u ${db_user} -p${db_password} -e "SELECT 1" &>/dev/null; 
 do
   sleep 5
 done

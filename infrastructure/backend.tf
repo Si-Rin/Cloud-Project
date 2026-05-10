@@ -10,7 +10,7 @@ resource "aws_launch_template" "backend_lt" {
   user_data = base64encode(templatefile("${path.module}/userdata/backend.sh", {
     db_host = aws_db_instance.db.address
     db_user = var.db_username
-    db_pass = var.db_password
+    db_password = var.db_password
     db_name = var.db_name
   }))
 }
